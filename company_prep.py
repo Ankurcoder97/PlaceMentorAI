@@ -75,28 +75,7 @@ Highlight {company}-relevant keywords, quantified project outcomes, team collabo
 
 def generate_company_questions(company, question_type, count, user):
     difficulty, process = COMPANY_META[company]
-    fallback_questions = []
-    for i in range(1, count + 1):
-        if question_type == "Coding":
-            fallback_questions.append(
-                f"{i}. {company} {difficulty} coding question: Solve an array/string problem using hashing or two pointers. Explain brute force, optimized approach, and complexity."
-            )
-        elif question_type == "Technical":
-            fallback_questions.append(
-                f"{i}. Explain one core CS concept for {company}: DBMS transaction, OOPs polymorphism, OS deadlock, or CN TCP/IP with a project example."
-            )
-        elif question_type == "HR":
-            fallback_questions.append(
-                f"{i}. Why do you want to join {company}, and how do your skills match its hiring process: {process}?"
-            )
-        elif question_type == "Aptitude":
-            fallback_questions.append(
-                f"{i}. Practice a {company}-style aptitude question from percentage, time-work, probability, logical reasoning, or verbal ability."
-            )
-        else:
-            fallback_questions.append(
-                f"{i}. Mixed {company} placement question covering aptitude, DSA, core CS, project explanation, and HR communication."
-            )
+    fallback_questions = build_fallback_questions(company, question_type, count, difficulty, process)
 
     fallback = f"""
 ### GPT-Generated {company} {question_type} Questions
@@ -122,6 +101,110 @@ For coding questions, include problem statement, input/output style, constraints
 For HR/technical questions, include what interviewer expects and a model answer outline.
 """
     return ai.generate(prompt, fallback=fallback)
+
+
+def build_fallback_questions(company, question_type, count, difficulty, process):
+    banks = {
+        "Coding": [
+            f"Given an integer array, return indices of two numbers that add to a target. Include brute force and hash map approaches. Expected: O(n).",
+            f"Find the longest substring without repeating characters. Explain sliding window and edge cases.",
+            f"Merge overlapping intervals and return the final non-overlapping list. Discuss sorting complexity.",
+            f"Given a binary tree, print level order traversal. Explain queue-based BFS.",
+            f"Find the number of islands in a grid. Explain DFS/BFS and visited marking.",
+            f"Find the first missing positive integer in an unsorted array. Aim for O(n) time.",
+            f"Detect a cycle in a linked list and explain slow-fast pointer logic.",
+            f"Find maximum subarray sum using Kadane's algorithm and dry run it.",
+            f"Given a sorted rotated array, search a target using modified binary search.",
+            f"Solve climbing stairs and explain how it becomes a Fibonacci DP problem.",
+            f"Implement LRU cache and explain why hash map plus doubly linked list is used.",
+            f"Given meeting intervals, find the minimum number of rooms required.",
+            f"Find top K frequent elements using heap or bucket approach.",
+            f"Check if a string has balanced parentheses using stack.",
+            f"Find shortest path in an unweighted graph using BFS.",
+            f"Generate all subsets of an array using backtracking.",
+            f"Find longest common subsequence using dynamic programming.",
+            f"Reverse nodes of a linked list in groups of K.",
+            f"Find median of two sorted arrays and discuss binary-search optimization.",
+            f"Design a rate limiter and explain data structures needed.",
+        ],
+        "Technical": [
+            f"Explain ACID properties in DBMS with a transaction example.",
+            f"What is normalization? Compare 1NF, 2NF, and 3NF with a simple student table.",
+            f"Difference between primary key, foreign key, unique key, and candidate key.",
+            f"Explain process vs thread and where multithreading is useful.",
+            f"What is deadlock? Explain the four necessary conditions and prevention methods.",
+            f"Difference between TCP and UDP. Which would you use for video calls and why?",
+            f"What happens when you type google.com in a browser?",
+            f"Explain OOPs pillars with examples from one of your projects.",
+            f"Difference between method overloading and method overriding.",
+            f"Explain REST API methods: GET, POST, PUT, PATCH, DELETE.",
+            f"What is indexing in databases? Why can indexes slow down writes?",
+            f"Explain joins in SQL: inner, left, right, and full join.",
+            f"What is caching? Where would you use it in a web app?",
+            f"Explain authentication vs authorization.",
+            f"What is time complexity? Compare O(n), O(log n), and O(n²).",
+            f"Explain stack vs queue and give real use cases.",
+            f"What is garbage collection and why does memory management matter?",
+            f"Explain horizontal vs vertical scaling.",
+            f"What is a race condition? How can it be avoided?",
+            f"Explain your best project architecture and the tradeoffs you made.",
+        ],
+        "HR": [
+            f"Tell me about yourself for a {company} interview.",
+            f"Why do you want to join {company}?",
+            f"Why should {company} hire you over other candidates?",
+            f"Describe a project challenge and how you solved it using STAR format.",
+            f"Tell me about a time you worked in a team and handled conflict.",
+            f"What are your strengths and weaknesses?",
+            f"Where do you see yourself in five years?",
+            f"Tell me about a time you failed and what you learned.",
+            f"How do your skills match the {company} hiring process: {process}?",
+            f"Are you comfortable relocating or working in a fast-paced environment?",
+            f"Explain a time when you learned a new technology quickly.",
+            f"What motivates you to work in software/technology?",
+            f"How do you manage deadlines during exams and projects?",
+            f"What is your biggest achievement in college?",
+            f"Why did you choose your branch?",
+            f"How do you handle feedback?",
+            f"Tell me about your leadership experience.",
+            f"What do you know about {company}'s products or culture?",
+            f"What salary expectations do you have as a fresher?",
+            f"Do you have any questions for the interviewer?",
+        ],
+        "Aptitude": [
+            "A number is increased by 20% and then decreased by 20%. Find the net percentage change.",
+            "A shopkeeper sells an item at 15% profit. If CP is Rs. 800, find SP.",
+            "A and B can finish work in 12 and 18 days. Find time taken together.",
+            "A train covers 240 km in 4 hours. Convert its speed to m/s.",
+            "The ratio of boys to girls is 5:3. If total students are 64, find boys.",
+            "A bag has 4 red, 5 blue, and 3 green balls. Find probability of drawing blue.",
+            "In how many ways can 3 students be selected from 10?",
+            "Find HCF and LCM of 24 and 36.",
+            "If simple interest on Rs. 5000 for 2 years is Rs. 800, find rate percent.",
+            "A person walks 5 km north, then 12 km east. Find shortest distance from start.",
+            "A pipe fills a tank in 6 hours and another empties it in 9 hours. Find net fill time.",
+            "A mixture has milk and water in 7:3. If mixture is 50 liters, find water quantity.",
+            "Find the next number: 3, 6, 12, 24, ?",
+            "If marked price is Rs. 1200 and discount is 25%, find selling price.",
+            "A man spends 70% of salary and saves Rs. 9000. Find salary.",
+            "Average of five numbers is 28. If one number is removed, average becomes 25. Find removed number.",
+            "Two dice are thrown. Find probability of getting sum 7.",
+            "A boat goes 30 km downstream in 3 hours and upstream in 5 hours. Find speed of stream.",
+            "If x:y = 2:5 and y:z = 3:4, find x:z.",
+            "A clock gains 5 minutes every hour. How much will it gain in 6 hours?",
+        ],
+    }
+    if question_type == "Mixed":
+        source = []
+        for key in ["Coding", "Technical", "Aptitude", "HR"]:
+            source.extend([f"{key}: {item}" for item in banks[key][:5]])
+    else:
+        source = banks.get(question_type, banks["Technical"])
+
+    questions = []
+    while len(questions) < count:
+        questions.extend(source)
+    return [f"{i}. {question}" for i, question in enumerate(questions[:count], 1)]
 
 
 def render_company_prep(user):
